@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>جنگ جهانی</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-2: linear-gradient(180deg,#0a0f18 0%,#141a24 70%);
+  --accent:#ff3d3d; 
+  --accent2:#ff9a3d; 
+  --muted:#7f8fa4;
+  --panel-bg:rgba(30,30,30,0.85);
+  --btn-bg:linear-gradient(90deg,#ff3d3d,#ff9a3d);
+  --btn-hover:linear-gradient(90deg,#ff5a5a,#ffc05a);
+  --progress-bg:#222;
+  --progress-fill:#ff3d3d;
+  --shadow-color:rgba(255,0,0,0.3);
+}
+
+*{box-sizing:border-box;font-family:'Orbitron', system-ui, -apple-system, 'Segoe UI', Roboto, 'Vazirmatn', sans-serif}
+html,body{height:100%;margin:0;background:var(--bg-2);color:#e6f0fb;direction:rtl}
+.container{max-width:1200px;margin:20px auto;padding:20px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .badge{
+  width:60px;height:60px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;color:#101218;font-weight:900;
+  box-shadow:0 0 10px var(--accent);
+  font-size:18px;
+}
+.h1{font-size:20px;font-weight:900;letter-spacing:1px;text-shadow:0 0 4px #000}
+.resources{display:flex;gap:12px;margin-top:16px}
+.res-card{
+  background:var(--panel-bg);
+  padding:12px 16px;border-radius:6px;
+  min-width:140px;display:flex;align-items:center;gap:10px;
+  border:1px solid #444;box-shadow:0 0 6px #000 inset;
+}
+.res-card .value{font-weight:800;font-size:16px;color:#fff}
+.layout{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:16px}
+.board{background:var(--panel-bg);padding:16px;border-radius:10px;min-height:520px;border:1px solid #555;box-shadow:0 0 10px #000 inset}
+.sidebar{padding:12px;border-radius:10px;background:var(--panel-bg);border:1px solid #555;box-shadow:0 0 8px #000 inset}
+.section-title{font-weight:900;color:var(--accent);margin-bottom:10px;text-shadow:0 0 4px #000}
+.card{
+  background:rgba(50,50,50,0.85);
+  padding:12px;border-radius:8px;margin-bottom:10px;
+  border:1px solid #666;box-shadow:0 0 8px #000 inset;
+}
+.small{font-size:13px;color:var(--muted)}
+.btn{
+  display:inline-flex;gap:8px;align-items:center;padding:10px 14px;border-radius:6px;
+  background:var(--btn-bg);color:#0f1620;font-weight:700;border:none;cursor:pointer;
+  text-transform:uppercase;letter-spacing:0.5px;
+  transition:0.2s all;
+  box-shadow:0 0 6px var(--accent);
+}
+.btn:hover{background:var(--btn-hover);box-shadow:0 0 12px var(--accent);}
+.btn.secondary{background:linear-gradient(90deg,#666,#999);color:#fff;box-shadow:0 0 6px #555}
+.targets{display:flex;flex-direction:column;gap:10px}
+.target{
+  display:flex;gap:10px;align-items:center;padding:10px;border-radius:6px;
+  background:rgba(40,40,40,0.85);border:1px solid #555;
+  box-shadow:0 0 6px #000 inset;
+}
+.progress{height:10px;background:var(--progress-bg);border-radius:6px;overflow:hidden}
+.progress > i{display:block;height:100%;background:var(--progress-fill);transition:width 0.4s ease}
+.attack-log{max-height:260px;overflow:auto;padding:8px;border-radius:6px;background:rgba(0,0,0,0.4);border:1px solid #333}
+.missile-card{display:flex;gap:8px;align-items:center;padding:8px;border-radius:6px;background:rgba(50,50,50,0.8);border:1px solid #444}
+.badge-pill{background:rgba(30,30,30,0.85);padding:6px 10px;border-radius:999px;font-weight:700;color:#fff;border:1px solid #555}
+.bottom-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;display:flex;gap:10px;z-index:999}
+.bar-btn{min-width:120px;height:48px;border-radius:6px;background:rgba(30,30,30,0.85);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:800;padding:8px 12px;color:#fff;border:1px solid #555;box-shadow:0 0 8px #000 inset}
+.screen{display:none}
+.screen.active{display:block}
+/* موبایل کوچک */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr; /* تک ستون */
+    gap: 12px;
+  }
+
+  .board, .sidebar {
+    min-height: auto;
+    padding: 12px;
+  }
+
+  .resources {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .res-card {
+    min-width: 45%;
+    padding: 8px 10px;
+  }
+
+  .btn, .bar-btn {
+    font-size: 14px;
+    padding: 10px 14px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .bottom-bar {
+    flex-direction: row;
+    gap: 6px;
+    bottom: 10px;
+  }
+
+  .target {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .progress {
+    height: 8px;
+  }
+
+  .small {
+    font-size: 12px;
+  }
+
+  .card {
+    padding: 10px;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">
+      <div class="badge">جنگ</div>
+      <div><div class="h1">جنگ جهانی <small class="small">جاوید </small></div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="badge-pill small" id="levelBadge">سطح: 1</div>
+      <button class="btn" id="resetBtn">ریست بازی</button>
+    </div>
+  </div>
+
+  <div class="resources">
+    <div class="res-card"><div class="small">🧱 اجر</div><div class="value" id="res-bricks">0</div></div>
+    <div class="res-card"><div class="small">💰 سکه</div><div class="value" id="res-coins">0</div></div>
+    <div class="res-card"><div class="small">👥 بسیجی</div><div class="value" id="res-basiji">0</div></div>
+    <div class="res-card"><div class="small">🏰 پایگاه</div><div class="value" id="res-bases">0</div></div>
+    <div class="res-card"><div class="small">🚀 موشک‌ها</div><div class="value" id="res-missiles">0</div></div>
+  </div>
+
+  <div class="layout">
+    <div class="board">
+      <!-- HOME -->
+      <div id="homeScreen" class="screen active">
+        <div class="section-title">خانه</div>
+
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <div>
+            <div style="font-weight:800">وضعیت سریع</div>
+            <div class="small" style="margin-top:6px">هر بسیجی هر ۵ ثانیه ۱ اجرا تولید می‌کند. هر پایگاه هر ۱ ثانیه ۱ اجرا تولید می‌کند.</div>
+            <div class="small" id="sandis-status" style="margin-top:6px"></div>
+          </div>
+
+          <div style="text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center">
+            <div class="badge-pill" id="homeBasiji">۰ بسیجی</div>
+            <div class="badge-pill" id="homeBases">۰ پایگاه</div>
+            <div class="small">موشک‌ها: <span id="homeMissiles">0</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+          <div><strong>آخرین عملیات</strong><div class="small" id="lastAction">—</div></div>
+          <div><button class="btn secondary" id="quickAttackBtn">حمله سریع</button></div>
+        </div>
+      </div>
+
+      <!-- SHOP -->
+      <div id="shopScreen" class="screen">
+        <div class="section-title">فروشگاه</div>
+
+        <div class="card">
+          <strong>پایگاه سپاه</strong>
+          <div class="small">قیمت: 10,000 اجرا — تولید 1 اجرا در ثانیه</div>
+          <div style="margin-top:8px"><button class="btn" id="buyBaseBtn">خرید پایگاه (۱۰,۰۰۰ اجرا)</button></div>
+        </div>
+
+        <div class="card">
+          <strong>ساندیس</strong>
+          <div class="small">قیمت: 2,000 سکه — افزایش تولیدِ معادل ۵ بسیجی به مدت ۵ دقیقه</div>
+          <div style="margin-top:8px">
+            <button class="btn" id="buySandisBtn">خرید ساندیس (۲,۰۰۰ سکه)</button>
+            <button class="btn secondary" id="useSandisBtn" style="display:none;margin-left:8px">استفاده</button>
+          </div>
+          <div class="small" id="sandisTimer" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+          <strong>خرید موشک‌ها (فقط با اِجر)</strong>
+          <div class="small">برای خرید موشک نیازی به سکه نیست — هزینه‌ها بر حسب اجر است.</div>
+          <div id="missileShop" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+        </div>
+
+        <div class="card">
+          <strong>بسته‌های سکه</strong>
+          <div class="small">بسته‌ها با اجرا خریده می‌شوند و سکه می‌دهند.</div>
+          <div id="coinPacks" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+        </div>
+
+        <div class="card">
+          <strong>استخدام بسیجی</strong>
+          <div class="small">هر بسیجی هزینه‌اش ۳,۰۰۰ سکه است.</div>
+          <div style="margin-top:8px"><button class="btn" id="buyBasijiShop">خرید بسیجی (۳,۰۰۰ سکه)</button></div>
+        </div>
+
+      </div>
+
+      <!-- ATTACK -->
+      <div id="attackScreen" class="screen">
+        <div class="section-title">حمله</div>
+
+        <div class="card">
+          <strong>پنل حمله</strong>
+          <div class="small">ابتدا موشک را انتخاب کن، سپس اهداف را یکی‌یکی بررسی کن — برای هر هدف حمله یا رد کن.</div>
+
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <select id="selectMissileForAttack" style="padding:8px;border-radius:8px;background:transparent;color:#e6f0fb"></select>
+            <button class="btn" id="startScoutBtn">شروع بررسی اهداف</button>
+            <button class="btn secondary" id="stopScoutBtn" style="display:none">پایان بررسی</button>
+          </div>
+
+          <div id="scoutArea" style="margin-top:12px;display:none">
+            <div id="scoutTarget" class="card"></div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="btn" id="attackCurrentBtn">حمله به این هدف</button>
+              <button class="btn secondary" id="skipCurrentBtn">رد و هدف بعدی</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="attack-log card" id="attackLog" style="margin-top:12px"></div>
+      </div>
+
+    </div>
+
+    <aside class="sidebar">
+      <div class="section-title">اهداف</div>
+      <div class="card">
+        <div class="targets" id="targets"></div>
+      </div>
+
+      <div class="card" style="margin-top:8px">
+        <strong>لاگ و تاریخچه</strong>
+        <div class="attack-log" id="logPanel" style="margin-top:8px"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- bottom bar: when on home show Shop+Attack; when on shop or attack, show Home + the other button -->
+<div class="bottom-bar">
+  <div class="bar-btn" id="btnLeft">فروشگاه</div>
+  <div class="bar-btn" id="btnRight">حمله</div>
+</div>
+
+<script>
+// ======= کامل و هماهنگ با HTML اصلی شما =======
+
+const stateKey = 'wwgame_v_final';
+let state = {
+  bricks: 80000,
+  coins: 2000,
+  missiles: [],    // array of missile ids
+  basiji: 0,
+  bases: 0,
+  sandis: 0,
+  sandisActive: false,
+  sandisEnd: 0,
+  sandisBoost: 0,   // بوست جدا برای ساندیس
+  log: [],
+  targets: []
+};
+
+const missileTypes = [
+  {id:'m1', name:'کوچک', brickCost:1000, stealPerc:5, img:'🚀'},
+  {id:'m2', name:'متوسط', brickCost:5000, stealPerc:12, img:'🛰️'},
+  {id:'m3', name:'موشک جاوید', brickCost:50000, stealPerc:85, img:'💥'},
+    {id:'m3', name:'دول جاوید', brickCost:50000, stealPerc:500, img:'💥'}
+];
+
+const coinPacks = [
+  {id:'p1', name:'بسته کوچک', brickCost:200, coins:1500},
+  {id:'p2', name:'بسته متوسط', brickCost:1200, coins:10000},
+  {id:'p3', name:'بسته بزرگ', brickCost:6000, coins:55000},
+  {id:'p4', name:'بسته ویژه', brickCost:25000, coins:250000}
+];
+
+function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+// ---------- init ----------
+function init(){
+  const saved = localStorage.getItem(stateKey);
+  if(saved){
+    try{ state = JSON.parse(saved); }catch(e){ console.warn('failed to parse saved state', e); }
+  }
+
+  if(!state.targets || state.targets.length < 2){
+    state.targets = [
+      {id:'t1', name:'هدف الف', bricks: rand(500,12000), missiles: rand(0,10)},
+      {id:'t2', name:'هدف ب', bricks: rand(2000,80000), missiles: rand(0,8)},
+      {id:'t3', name:'هدف ج', bricks: rand(100,90000), missiles: rand(0,6)},
+      {id:'t4', name:'هدف د', bricks: rand(1000,50000), missiles: rand(0,5)}
+    ];
+  }
+
+  renderShop();
+  renderCoinPacks();
+  bindUI();
+  bindBottom();
+  startGenerators();
+  renderAll();
+  // اطمینان از هماهنگی دکمه‌ها و نمایش اولیه
+  showScreen('homeScreen');
+}
+
+// ---------- save / render ----------
+function save(){ localStorage.setItem(stateKey, JSON.stringify(state)); }
+
+function renderAll(){
+  const el = id => document.getElementById(id);
+  if(el('res-bricks')) el('res-bricks').textContent = Math.floor(state.bricks).toLocaleString();
+  if(el('res-coins')) el('res-coins').textContent = Math.floor(state.coins).toLocaleString();
+  if(el('res-basiji')) el('res-basiji').textContent = state.basiji;
+  if(el('res-bases')) el('res-bases').textContent = state.bases;
+  if(el('res-missiles')) el('res-missiles').textContent = state.missiles.length;
+
+  const boostText = state.sandisBoost > 0 ? ` (+${state.sandisBoost} از ساندیس)` : '';
+  if(el('homeBasiji')) el('homeBasiji').textContent = state.basiji + ' بسیجی' + boostText;
+  if(el('homeBases')) el('homeBases').textContent = state.bases + ' پایگاه';
+  if(el('homeMissiles')) el('homeMissiles').textContent = state.missiles.length;
+
+  // show/hide useSandisBtn
+  const useSandisBtn = el('useSandisBtn');
+  if(useSandisBtn) useSandisBtn.style.display = (state.sandis > 0 && !state.sandisActive) ? 'inline-block' : 'none';
+
+  renderTargets();
+  renderLog();
+  renderSelectors();
+  renderSandisTimer();
+  save();
+}
+
+// ---------- shop rendering ----------
+function renderShop(){
+  const shop = document.getElementById('missileShop');
+  if(!shop) return;
+  shop.innerHTML = '';
+  missileTypes.forEach(m=>{
+    const card = document.createElement('div'); card.className='missile-card';
+    card.innerHTML = `<div style="font-size:22px">${m.img}</div>
+      <div style="flex:1">
+        <div style="font-weight:800">${m.name}</div>
+        <div class="small">قیمت: ${m.brickCost.toLocaleString()} اجرا</div>
+        <div class="small">دزدیدن: ${m.stealPerc}%</div>
+      </div>
+      <div><button class="btn buy-missile" data-id="${m.id}">خرید</button></div>`;
+    shop.appendChild(card);
+  });
+  shop.querySelectorAll('.buy-missile').forEach(b=>{
+    b.addEventListener('click', ()=> {
+      const id = b.getAttribute('data-id');
+      const m = missileTypes.find(x=>x.id===id);
+      if(!m) return;
+      if(state.bricks < m.brickCost){ alert('اجر کافی نیست'); return; }
+      state.bricks -= m.brickCost;
+      state.missiles.push(m.id);
+      state.log.push({title:'خرید موشک', msg:`موشک ${m.name} را با ${m.brickCost.toLocaleString()} اجرا خریدی.`});
+      renderAll();
+    });
+  });
+}
+
+function renderCoinPacks(){
+  const el = document.getElementById('coinPacks');
+  if(!el) return;
+  el.innerHTML = '';
+  coinPacks.forEach(p=>{
+    const d = document.createElement('div'); d.className='card';
+    d.innerHTML = `<div style="font-weight:700">${p.name}</div><div class="small">قیمت: ${p.brickCost.toLocaleString()} اجرا — دریافت ${p.coins.toLocaleString()} سکه</div><div style="margin-top:8px"><button class="btn buy-pack" data-id="${p.id}">خرید</button></div>`;
+    el.appendChild(d);
+  });
+  el.querySelectorAll('.buy-pack').forEach(b=> b.addEventListener('click', ()=>{
+    const id = b.getAttribute('data-id'); const p = coinPacks.find(x=>x.id===id);
+    if(!p) return;
+    if(state.bricks < p.brickCost){ alert('اجر کافی نیست'); return; }
+    state.bricks -= p.brickCost; state.coins += p.coins;
+    state.log.push({title:'خرید بسته سکه', msg:`${p.name} را خریدی و ${p.coins.toLocaleString()} سکه دریافت کردی.`});
+    renderAll();
+  }));
+}
+
+// ---------- targets & log ----------
+function renderTargets(){
+  const tdiv = document.getElementById('targets');
+  if(!tdiv) return;
+  tdiv.innerHTML = '';
+  state.targets.forEach(t=>{
+    const el = document.createElement('div'); el.className='target';
+    el.innerHTML = `<div class="avatar">${t.name.split(' ')[1] || t.name[0]}</div>
+      <div style="flex:1">
+        <strong>${t.name}</strong>
+        <div class="small">اجر: ${Math.floor(t.bricks).toLocaleString()} — موشک: ${t.missiles}</div>
+        <div class="progress" style="margin-top:6px"><i style="width:${Math.min(100,(t.bricks/100000)*100)}%"></i></div>
+      </div>
+      <div><button class="btn secondary attack-btn">حمله</button></div>`;
+    el.querySelector('.attack-btn').addEventListener('click', ()=> attackTarget(t));
+    tdiv.appendChild(el);
+  });
+}
+
+function renderLog(){
+  const lp = document.getElementById('logPanel');
+  if(!lp) return;
+  lp.innerHTML = '';
+  state.log.slice().reverse().forEach(it=>{
+    const d = document.createElement('div'); d.className='notice'; d.style.marginBottom='8px';
+    d.innerHTML = `<strong>${it.title}</strong><div class="small">${it.msg}</div>`;
+    lp.appendChild(d);
+  });
+}
+
+// ---------- selectors (attack) ----------
+function renderSelectors(){
+  const sel = document.getElementById('selectMissileForAttack');
+  if(!sel) return;
+  sel.innerHTML = '';
+  state.missiles.forEach((mid, idx)=>{
+    const m = missileTypes.find(x=>x.id===mid);
+    const opt = document.createElement('option'); opt.value = idx; opt.text = `${m.img} ${m.name}`;
+    sel.appendChild(opt);
+  });
+  if(state.missiles.length === 0){
+    const opt = document.createElement('option'); opt.value = -1; opt.text = 'هیچ موشکی نداری'; sel.appendChild(opt);
+  }
+}
+
+// ---------- attack flow ----------
+let scouting = false, scoutIndex = 0;
+function startScouting(){
+  if(state.missiles.length === 0){ alert('هیچ موشکی نداری'); return; }
+  scouting = true; scoutIndex = 0;
+  const area = document.getElementById('scoutArea');
+  if(area) area.style.display = 'block';
+  const startBtn = document.getElementById('startScoutBtn');
+  const stopBtn = document.getElementById('stopScoutBtn');
+  if(startBtn) startBtn.style.display = 'none';
+  if(stopBtn) stopBtn.style.display = 'inline-block';
+  showScoutTarget();
+}
+function stopScouting(){
+  scouting = false;
+  const area = document.getElementById('scoutArea');
+  if(area) area.style.display = 'none';
+  const startBtn = document.getElementById('startScoutBtn');
+  const stopBtn = document.getElementById('stopScoutBtn');
+  if(startBtn) startBtn.style.display = 'inline-block';
+  if(stopBtn) stopBtn.style.display = 'none';
+}
+function showScoutTarget(){
+  const scoutTargetEl = document.getElementById('scoutTarget');
+  if(!scoutTargetEl) return;
+  if(scoutIndex >= state.targets.length){ scoutTargetEl.innerHTML = '<div class="small">هدف دیگری وجود ندارد.</div>'; return; }
+  const t = state.targets[scoutIndex];
+  scoutTargetEl.innerHTML = `<div style="display:flex;gap:10px;align-items:center">
+    <div style="width:64px"><div class="missile-img">⚑</div></div>
+    <div style="flex:1"><b>${t.name}</b><div class="small">اجر: ${Math.floor(t.bricks).toLocaleString()}</div><div class="small">موشک: ${t.missiles}</div></div>
+    <div style="width:120px;text-align:center"><div class="small">ضعف</div><div class="progress" style="margin-top:6px"><i style="width:${Math.min(100,(t.bricks/100000)*100)}%"></i></div></div>
+  </div>`;
+}
+function attackCurrent(){
+  const sel = document.getElementById('selectMissileForAttack');
+  if(!sel){ alert('موشک انتخاب نشده'); return; }
+  const mIdx = parseInt(sel.value);
+  if(isNaN(mIdx) || mIdx < 0 || !state.missiles[mIdx]){ alert('موشک انتخاب نشده'); return; }
+  if(scoutIndex >= state.targets.length){ alert('هدف نامعتبر'); return; }
+
+  const missileId = state.missiles.splice(mIdx,1)[0];
+  const mType = missileTypes.find(x=>x.id === missileId);
+  const target = state.targets[scoutIndex];
+
+  const factor = 0.6 + Math.random()*0.4;
+  const stolen = Math.floor(target.bricks * (mType.stealPerc/100) * factor);
+  const stolenCap = Math.min(stolen, target.bricks);
+  target.bricks -= stolenCap; state.bricks += stolenCap;
+
+  const coinGain = Math.floor((mType.brickCost)*0.2 + Math.random()*(mType.brickCost)*0.5);
+  state.coins += coinGain;
+
+  state.log.push({title:'حمله', msg:`با ${mType.name} به ${target.name} زدی — ${stolenCap.toLocaleString()} اجرا و ${coinGain.toLocaleString()} سکه دریافت شد.`});
+  appendAttackLog(`حمله به ${target.name} با ${mType.name} — ${stolenCap.toLocaleString()} اجرا`);
+  scoutIndex++;
+  renderAll();
+  if(scoutIndex < state.targets.length) showScoutTarget();
+  else {
+    const scEl = document.getElementById('scoutTarget');
+    if(scEl) scEl.innerHTML = '<div class="small">تمام اهداف بررسی شدند.</div>';
+  }
+}
+function skipCurrent(){
+  scoutIndex++;
+  if(scoutIndex < state.targets.length) showScoutTarget();
+  else {
+    const scEl = document.getElementById('scoutTarget');
+    if(scEl) scEl.innerHTML = '<div class="small">تمام اهداف بررسی شدند.</div>';
+  }
+}
+function appendAttackLog(text){
+  const el = document.getElementById('attackLog');
+  if(!el) return;
+  const p = document.createElement('div'); p.className='small'; p.style.padding='6px 0'; p.textContent = text;
+  el.prepend(p);
+}
+
+// ---------- attack single ----------
+function attackTarget(target){
+  if(state.missiles.length === 0){ alert('موشک نداری!'); return; }
+  const missileId = state.missiles.shift();
+  const m = missileTypes.find(x=>x.id === missileId);
+  const factor = 0.6 + Math.random()*0.4;
+  const stolen = Math.floor(target.bricks * (m.stealPerc/100) * factor);
+  const stolenCap = Math.min(stolen, target.bricks);
+  target.bricks -= stolenCap; state.bricks += stolenCap;
+  const coinGain = Math.floor(m.brickCost * 0.25 + Math.random()*m.brickCost*0.5);
+  state.coins += coinGain;
+  state.log.push({title:'حمله', msg:`با ${m.name} به ${target.name} زدی — ${stolenCap.toLocaleString()} اجرا، ${coinGain.toLocaleString()} سکه.`});
+  appendAttackLog(`حمله به ${target.name} با ${m.name}: +${stolenCap.toLocaleString()} اجرا`);
+  renderAll();
+}
+
+// ---------- buy / use ----------
+function buyBase(){
+  if(state.bricks < 10000){ alert('اجر کافی نیست'); return; }
+  state.bricks -= 10000; state.bases += 1;
+  state.log.push({title:'خرید پایگاه', msg:'یک پایگاه خریدی — 10,000 اجرا خرج شد.'});
+  renderAll();
+}
+function buySandis(){
+  if(state.coins < 2000){ alert('سکه کافی نیست'); return; }
+  state.coins -= 2000; state.sandis += 1;
+  state.log.push({title:'خرید ساندیس', msg:'یک ساندیس خریدی — آمادهٔ استفاده.'});
+  renderAll();
+}
+function useSandis(){
+  if(state.sandis <= 0){ alert('ساندیس نداری'); return; }
+  if(state.sandisActive){ alert('ساندیس همین حالا فعال است'); return; }
+  state.sandis -= 1;
+  state.sandisActive = true;
+  state.sandisEnd = Date.now() + 5*60*1000; // 5 دقیقه
+  state.sandisBoost = 5;
+  state.log.push({title:'استفاده ساندیس', msg:'ساندیس استفاده شد — تولید به مدت ۵ دقیقه افزایش یافت.'});
+  renderAll();
+}
+function buyBasiji(){
+  const cost = 3000;
+  if(state.coins < cost){ alert('سکه کافی نیست'); return; }
+  state.coins -= cost; state.basiji += 1;
+  state.log.push({title:'استخدام', msg:`یک بسیجی استخدام شد — ${cost} سکه خرج شد.`});
+  renderAll();
+}
+
+// ---------- generators ----------
+let genInterval1 = null, genInterval5 = null;
+function startGenerators(){
+  if(genInterval1) clearInterval(genInterval1);
+  genInterval1 = setInterval(()=>{
+    if(state.bases > 0) state.bricks += state.bases; // +1 per base per sec
+
+    // اگر ساندیس منقضی شده باشه
+    if(state.sandisActive && Date.now() > state.sandisEnd){
+      state.sandisActive = false;
+      state.sandisBoost = 0;
+      state.log.push({title:'ساندیس تمام شد', msg:'اثر ساندیس پایان یافت.'});
+    }
+    renderAll();
+  }, 1000);
+
+  if(genInterval5) clearInterval(genInterval5);
+  genInterval5 = setInterval(()=>{
+    const effectiveBasiji = state.basiji + state.sandisBoost;
+    if(effectiveBasiji > 0){
+      state.bricks += effectiveBasiji; // هر ۵ ثانیه: هر بسیجی 1 اجرا
+    }
+    renderAll();
+  }, 5000);
+}
+
+// ---------- bottom bar ----------
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if(target) target.classList.add('active');
+
+  const left = document.getElementById('btnLeft');
+  const right = document.getElementById('btnRight');
+
+  if(id === 'homeScreen'){
+    if(left) left.textContent = 'فروشگاه';
+    if(right) right.textContent = 'حمله';
+  } else if(id === 'shopScreen'){
+    if(left) left.textContent = 'خانه';
+    if(right) right.textContent = 'حمله';
+  } else if(id === 'attackScreen'){
+    if(left) left.textContent = 'فروشگاه';
+    if(right) right.textContent = 'خانه';
+  }
+}
+
+function bindBottom(){
+  const left = document.getElementById('btnLeft');
+  const right = document.getElementById('btnRight');
+
+  if(left) left.addEventListener('click', ()=>{
+    const homeActive = document.getElementById('homeScreen').classList.contains('active');
+    if(homeActive) showScreen('shopScreen'); else showScreen('homeScreen');
+  });
+
+  if(right) right.addEventListener('click', ()=>{
+    const homeActive = document.getElementById('homeScreen').classList.contains('active');
+    if(homeActive) showScreen('attackScreen'); else showScreen('homeScreen');
+  });
+}
+
+// ---------- UI bindings ----------
+function bindUI(){
+  const resetBtn = document.getElementById('resetBtn');
+  if(resetBtn) resetBtn.addEventListener('click', ()=> {
+    if(confirm('آیا مطمئنی بازی ریست شود؟')){
+      localStorage.removeItem(stateKey); location.reload();
+    }
+  });
+
+  const buyBaseBtn = document.getElementById('buyBaseBtn');
+  if(buyBaseBtn) buyBaseBtn.addEventListener('click', buyBase);
+
+  const buySandisBtn = document.getElementById('buySandisBtn');
+  if(buySandisBtn) buySandisBtn.addEventListener('click', buySandis);
+
+  const useSandisBtn = document.getElementById('useSandisBtn');
+  if(useSandisBtn) useSandisBtn.addEventListener('click', useSandis);
+
+  const buyBasijiShop = document.getElementById('buyBasijiShop'); // **مهم: id مطابق HTML شما**
+  if(buyBasijiShop) buyBasijiShop.addEventListener('click', buyBasiji);
+
+  const startScoutBtn = document.getElementById('startScoutBtn');
+  if(startScoutBtn) startScoutBtn.addEventListener('click', startScouting);
+
+  const stopScoutBtn = document.getElementById('stopScoutBtn');
+  if(stopScoutBtn) stopScoutBtn.addEventListener('click', stopScouting);
+
+  const attackCurrentBtn = document.getElementById('attackCurrentBtn');
+  if(attackCurrentBtn) attackCurrentBtn.addEventListener('click', attackCurrent);
+
+  const skipCurrentBtn = document.getElementById('skipCurrentBtn');
+  if(skipCurrentBtn) skipCurrentBtn.addEventListener('click', skipCurrent);
+
+  const quickAttackBtn = document.getElementById('quickAttackBtn');
+  if(quickAttackBtn) quickAttackBtn.addEventListener('click', ()=>{
+    if(state.targets.length === 0) return;
+    const t = state.targets[rand(0, state.targets.length - 1)];
+    attackTarget(t);
+  });
+}
+
+// ---------- sandis timer UI ----------
+function renderSandisTimer(){
+  const el = document.getElementById('sandisTimer');
+  const status = document.getElementById('sandis-status');
+  if(state.sandisActive){
+    const rem = Math.max(0, Math.ceil((state.sandisEnd - Date.now())/1000));
+    if(el) el.textContent = `ساندیس فعال: ${rem.toLocaleString()} ثانیه باقی مانده`;
+    if(status) status.textContent = `ساندیس فعال — ${rem} ثانیه مانده`;
+  } else {
+    if(el) el.textContent = '';
+    if(status) status.textContent = '';
+  }
+}
+
+setInterval(renderSandisTimer, 1000);
+
+// ---------- start ----------
+window.addEventListener('load', init);
+</script>
+
+</body>
+</html>
